@@ -1,5 +1,6 @@
 package clients
 
+// go:generate mockgen -source=clients.go -destination=./../mocks/clients_mock.go -package=mocks ClientInterface
 import (
 	"io/ioutil"
 	"net/http"

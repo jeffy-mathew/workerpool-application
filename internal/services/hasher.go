@@ -5,6 +5,7 @@ import (
 	"hash"
 )
 
+// go:generate mockgen -source=hasher.go -destination=./../mocks/hasher_mock.go -package=mocks HasherInterface
 type HasherInterface interface {
 	HashInput(input []byte) string
 }

@@ -1,6 +1,8 @@
 package workerpool
 
+// go:generate mockgen -source=workerpool-application/internal/pkg/workerpool.go -destination=./../../mocks/workerpool_mock.go -package=mocks WorkerPoolInterface
 import (
+	"log"
 	"workerpool-application/internal/clients"
 	"workerpool-application/internal/services"
 )
@@ -30,6 +32,7 @@ func (w *WorkerPool) DoWork(endpoints <-chan string, responses chan<- WorkerResp
 			responses <- WorkerResp{Endpoint: endpoint, Result: err.Error()}
 			continue
 		}
+		log.Println("request completed", body)
 		result := w.hasher.HashInput(body)
 		responses <- WorkerResp{Endpoint: endpoint, Result: result}
 	}
