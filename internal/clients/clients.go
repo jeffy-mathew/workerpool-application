@@ -21,7 +21,7 @@ func NewClient(cli *http.Client) ClientInterface {
 
 func (c *Client) DoReq(target string) ([]byte, error) {
 	// check if url has scheme
-	if !strings.HasPrefix("http://", target) {
+	if !strings.HasPrefix(target, "http://") {
 		target = "http://" + target
 	}
 	req, err := http.NewRequest(http.MethodGet, target, nil)

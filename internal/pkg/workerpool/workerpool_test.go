@@ -1,10 +1,11 @@
-package workerpool
+package workerpool_test
 
 import (
 	"errors"
 	"sync"
 	"testing"
 	"workerpool-application/internal/mocks"
+	"workerpool-application/internal/pkg/workerpool"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -22,9 +23,9 @@ func TestDoWork(t *testing.T) {
 		hasherMock.EXPECT().HashInput([]byte("response")).Return("new hash").Do(func(arg0 interface{}) {
 			defer mockWg.Done()
 		})
-		workerPool := NewWorkerPool(clientMock, hasherMock)
+		workerPool := workerpool.NewWorkerPool(clientMock, hasherMock)
 		endpointsChan := make(chan string)
-		resultsChan := make(chan WorkerResp)
+		resultsChan := make(chan workerpool.WorkerResp)
 		go workerPool.DoWork(endpointsChan, resultsChan)
 		wg := &sync.WaitGroup{}
 		wg.Add(1)
@@ -32,7 +33,7 @@ func TestDoWork(t *testing.T) {
 			defer wg.Done()
 			endpointsChan <- "http://google.com"
 		}(wg)
-		expectedResult := WorkerResp{
+		expectedResult := workerpool.WorkerResp{
 			Endpoint: "http://google.com",
 			Result:   "new hash",
 		}
@@ -50,9 +51,9 @@ func TestDoWork(t *testing.T) {
 		clientMock.EXPECT().DoReq("http://google.com").Return(nil, errors.New("request failed")).Do(func(arg0 interface{}) {
 			defer mockWg.Done()
 		})
-		workerPool := NewWorkerPool(clientMock, hasherMock)
+		workerPool := workerpool.NewWorkerPool(clientMock, hasherMock)
 		endpointsChan := make(chan string)
-		resultsChan := make(chan WorkerResp)
+		resultsChan := make(chan workerpool.WorkerResp)
 		go workerPool.DoWork(endpointsChan, resultsChan)
 		wg := &sync.WaitGroup{}
 		wg.Add(1)
@@ -60,7 +61,7 @@ func TestDoWork(t *testing.T) {
 			defer wg.Done()
 			endpointsChan <- "http://google.com"
 		}(wg)
-		expectedResult := WorkerResp{
+		expectedResult := workerpool.WorkerResp{
 			Endpoint: "http://google.com",
 			Result:   "request failed",
 		}
